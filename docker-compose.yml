@@ -1,0 +1,38 @@
+version: "3.7"
+
+services:
+
+  postgres:
+    image: postgres:12-alpine
+    container_name: postgres-idiario
+    ports:
+      - 5432
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=idiario_development
+      - POSTGRES_PASSWORD=postgres
+
+  redis:
+    image: redis:4.0-alpine
+    container_name: redis-idiario
+    ports:
+      - 6379
+
+  app:
+    build: .
+    container_name: idiario
+    command: ./script/start
+    volumes:
+      - .:/app
+      - box:/box
+    ports:
+      - 3000:3000
+    depends_on:
+      - postgres
+      - redis
+
+volumes:
+  app:
+  box:
+  pg_data:
